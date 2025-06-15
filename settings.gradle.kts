@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "AIArtExample"
 include(":app")
 include(":core")
+include(":aiartservice")
