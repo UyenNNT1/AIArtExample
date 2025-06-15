@@ -61,4 +61,6 @@ dependencies {
     implementation (libs.logging.interceptor)
     implementation (libs.api.signature)
     implementation (libs.glide)
+    implementation("androidx.lifecycle:lifecycle-process:2.8.7")
+
 }
