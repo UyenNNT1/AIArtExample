@@ -46,3 +46,4 @@ rootProject.name = "AIArtExample"
 include(":app")
 include(":core")
 include(":aiartservice")
+include(":pickphoto")
