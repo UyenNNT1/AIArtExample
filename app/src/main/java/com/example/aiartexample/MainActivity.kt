@@ -88,6 +88,18 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
                 marqueeEnabled = false
             )
         }
+        Button(
+            onClick = {/*open pick photo*/},
+            modifier = Modifier
+        ) {
+            AperoTextView(
+                text = "Open pick photo",
+                textStyle = LocalCustomTypography.current.Body.semiBold,
+                maxLines = 1,
+                modifier = Modifier,
+                marqueeEnabled = false
+            )
+        }
     }
 
 }
