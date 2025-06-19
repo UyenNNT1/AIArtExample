@@ -1,5 +1,6 @@
 package com.example.aiartexample
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -22,6 +23,8 @@ import com.example.aiartservice.BuildConfig
 import com.example.aiartservice.network.model.AiArtParams
 import com.example.core.designsystem.component.AperoTextView
 import com.example.core.designsystem.style.LocalCustomTypography
+import com.example.pickphoto.PhotoPickerComposeActivity
+
 import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
@@ -66,6 +69,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -89,7 +93,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
             )
         }
         Button(
-            onClick = {/*open pick photo*/},
+            onClick = {
+                val intent = Intent(context, PhotoPickerComposeActivity::class.java)
+                context.startActivity(intent)
+            },
             modifier = Modifier
         ) {
             AperoTextView(
@@ -101,7 +108,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
             )
         }
     }
-
 }
 
 @Preview(showBackground = true)
