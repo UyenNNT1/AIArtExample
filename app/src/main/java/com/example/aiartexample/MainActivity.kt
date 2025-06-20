@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import com.example.aiartexample.utils.ViewModelFactoryProvider
 import com.example.aiartservice.AiServiceConfig
 import com.example.aiartservice.BuildConfig
@@ -24,12 +25,18 @@ import com.example.aiartservice.network.model.AiArtParams
 import com.example.core.designsystem.component.AperoTextView
 import com.example.core.designsystem.style.LocalCustomTypography
 import com.example.pickphoto.PhotoPickerComposeActivity
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
     private val artViewModel: AiArtViewModel by viewModels {
         ViewModelFactoryProvider.provideAiArtViewModelFactory()
+    }
+
+    private val artStyleViewModel: AiArtStyleViewModel by viewModels {
+        ViewModelFactoryProvider.provideAiStyleViewModelFactory()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +55,9 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+        artStyleViewModel.uiState.onEach {
+            Log.d("uyenntt", "category: ${it.categories}")
+        }.launchIn(lifecycleScope)
     }
 
     private fun setUpModuleAiService() {

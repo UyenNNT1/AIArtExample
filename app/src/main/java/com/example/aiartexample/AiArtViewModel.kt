@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AiArtViewModel(
-    private val aiServiceRepository: AiArtRepository) : ViewModel() {
+    private val aiServiceRepository: AiArtRepository
+) : ViewModel() {
     private val _resultSuccess = MutableStateFlow<String?>(null)
     val resultSuccess = _resultSuccess.asStateFlow()
     private val _resultError = MutableStateFlow<ResultError?>(null)
