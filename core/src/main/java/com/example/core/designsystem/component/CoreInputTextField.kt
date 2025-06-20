@@ -22,11 +22,11 @@ import com.example.core.designsystem.style.pxToDp
 import com.example.core.R
 
 @Composable
-fun AIInputField(
+fun CoreInputTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: String = "Enter your prompt...",
+    placeholder: String = "",
     isEnabled: Boolean = true,
     onClearClick: () -> Unit
 ) {
@@ -80,7 +80,7 @@ fun AIInputField(
 @Preview
 @Composable
 private fun AllInputFieldPreview() {
-    AIInputField(
+    CoreInputTextField(
         value = "",
         onValueChange = {},
         onClearClick = {}

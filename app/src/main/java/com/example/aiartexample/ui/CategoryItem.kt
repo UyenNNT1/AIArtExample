@@ -1,4 +1,4 @@
-package com.example.core.designsystem.component
+package com.example.aiartexample.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,16 +26,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.example.core.R
+import com.example.core.designsystem.component.AperoTextView
 import com.example.core.designsystem.style.LocalCustomTypography
 import com.example.core.designsystem.style.pxToDp
 
 @Composable
 fun ChooseStyleScreen(
+    modifier: Modifier = Modifier,
     selectedTab: String = "Trending",
     onTabSelected: (String) -> Unit = {},
     styles: List<StyleItem> = sampleStyles
 ) {
-    Column(modifier = Modifier.padding(16.pxToDp())) {
+    Column(modifier = modifier.padding(16.pxToDp())) {
         AperoTextView(
             text = "Choose your Style",
             textStyle = LocalCustomTypography.current.Title3.medium,
@@ -43,7 +46,7 @@ fun ChooseStyleScreen(
             marqueeEnabled = true
         )
 
-        Spacer(modifier = Modifier.height(8.pxToDp()))
+        Spacer(modifier = Modifier.height(4.pxToDp()))
 
         StyleTabRow(
             tabs = listOf("Trending", "Fashion", "Anime", "Digital Art", "Painting"),
@@ -94,25 +97,26 @@ fun StyleTabRow(
 }
 
 @Composable
-fun StyleCard(style: StyleItem, selected: Boolean = false, modifier: Modifier = Modifier) {
+fun StyleCard(modifier: Modifier = Modifier, style: StyleItem, selected: Boolean = false) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .width(100.pxToDp())
+        modifier = modifier
+            .width(80.pxToDp())
+            .wrapContentHeight()
     ) {
         AsyncImage(
             model = style.imageRes,
             contentDescription = null,
             modifier = Modifier
-                .size(100.pxToDp())
-                .clip(RoundedCornerShape(16.pxToDp()))
+                .size(80.pxToDp())
+                .clip(RoundedCornerShape(12.pxToDp()))
                 .background(Color.Gray),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(4.pxToDp()))
         AperoTextView(
             text = style.title,
-            textStyle = LocalCustomTypography.current.Body.regular,
+            textStyle = LocalCustomTypography.current.Caption1.regular,
             modifier = Modifier.padding(top = 4.pxToDp()),
             maxLines = 1,
             marqueeEnabled = true
@@ -127,7 +131,7 @@ fun StyleGrid(styles: List<StyleItem> , modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(12.pxToDp())
     ) {
         items(styles) { style ->
-            StyleCard(style)
+            StyleCard(style = style)
         }
     }
 }
@@ -138,11 +142,11 @@ data class StyleItem(
 )
 
 val sampleStyles = listOf(
-    StyleItem(R.drawable.ic_gallery, "Novelistic"),
-    StyleItem(R.drawable.ic_gallery, "Novelistic"),
-    StyleItem(R.drawable.ic_gallery, "Novelistic"),
-    StyleItem(R.drawable.ic_gallery, "Novelistic"),
-    StyleItem(R.drawable.ic_gallery, "Realistic")
+    StyleItem(R.drawable.image_test, "Novelistic"),
+    StyleItem(R.drawable.image_test, "Novelistic"),
+    StyleItem(R.drawable.image_test, "Novelistic"),
+    StyleItem(R.drawable.image_test, "Novelistic"),
+    StyleItem(R.drawable.image_test, "Realistic")
 )
 
 @Preview(showBackground = true, name = "Choose Style Screen")

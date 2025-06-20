@@ -32,7 +32,7 @@ import com.example.core.designsystem.style.pxToDp
 @Composable
 fun ImagePickerArea(
     modifier: Modifier = Modifier,
-    selectedImageUrl: String? = null,
+    selectedImageModel: Any? = null,
     onOpenPickPhoto: () -> Unit,
     aspectRatio: Float = 1f
 ) {
@@ -49,14 +49,14 @@ fun ImagePickerArea(
             .background(Color.White)
             .clickable { onOpenPickPhoto() }
     ) {
-        if (selectedImageUrl != null) {
+        if (selectedImageModel != null) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AsyncImage(
-                    model = selectedImageUrl,
+                    model = selectedImageModel,
                     contentDescription = "Selected image",
                     modifier = Modifier
                         .fillMaxSize(),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.FillHeight
                 )
 
                 Image(
@@ -99,7 +99,7 @@ fun ImagePickerArea(
 private fun ImagePickerAreaPreview() {
     ImagePickerArea(
         modifier = Modifier,
-        selectedImageUrl = "https://static.apero.vn/video-editor-pro/ai-style-thumbnail/Neon_City_After.jpg",
+        selectedImageModel = R.drawable.image_test,
         onOpenPickPhoto = {},
         aspectRatio = 1f
     )
