@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.padding(innerPadding),
                     onClick = {
                         Log.d("uyenntt", "onCreate: ok")
-                        artViewModel.genAiArtImage(AiArtParams(pathImageOrigin = "/storage/sdcard0/Pictures/f54d278a-8529-4b90-abda-04970a2ce2d5.png", style = "6558856da5f7c4e9ba4cf9df"))
+                        artViewModel.genAiArtImage(AiArtParams(pathImageOrigin = "/storage/sdcard0/Pictures/fe2bbd2d-5a49-4af5-a3b6-3ff7607ec71d.png", style = "6558856da5f7c4e9ba4cf9df"))
                     }
                 )
             }

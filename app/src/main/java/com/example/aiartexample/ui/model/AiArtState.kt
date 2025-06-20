@@ -1,4 +1,4 @@
-package com.example.aiartexample.model
+package com.example.aiartexample.ui.model
 
 data class AiArtUiState(
     var prompt: String = "",

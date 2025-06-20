@@ -1,4 +1,4 @@
-package com.example.aiartexample.model
+package com.example.aiartexample.domain.model
 
 data class ResultError(
     val code: Int,
