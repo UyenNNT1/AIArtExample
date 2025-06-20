@@ -3,8 +3,8 @@ package com.example.aiartexample
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.aiartexample.mapper.toModel
-import com.example.aiartexample.model.AiArtCategory
+import com.example.aiartexample.data.mapper.toModel
+import com.example.aiartexample.domain.model.AiArtCategory
 import com.example.aiartservice.network.repository.aistyle.AiStyleRepository
 import com.example.aiartservice.network.response.ResponseState
 import kotlinx.coroutines.flow.MutableStateFlow

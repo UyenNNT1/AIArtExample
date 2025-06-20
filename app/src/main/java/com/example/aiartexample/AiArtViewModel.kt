@@ -3,7 +3,7 @@ package com.example.aiartexample
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.aiartexample.model.ResultError
+import com.example.aiartexample.domain.model.ResultError
 import com.example.aiartservice.network.model.AiArtParams
 import com.example.aiartservice.network.repository.aiartv5.AiArtRepository
 import com.example.aiartservice.network.response.ResponseState

@@ -1,7 +1,7 @@
-package com.example.aiartexample.mapper
+package com.example.aiartexample.data.mapper
 
-import com.example.aiartexample.model.AiArtCategory
-import com.example.aiartexample.model.AiArtStyle
+import com.example.aiartexample.domain.model.AiArtCategory
+import com.example.aiartexample.domain.model.AiArtStyle
 import com.example.aiartservice.network.model.CategoryResponse
 import com.example.aiartservice.network.model.StyleResponse
 
