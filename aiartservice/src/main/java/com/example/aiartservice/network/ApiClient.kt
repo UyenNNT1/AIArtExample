@@ -1,10 +1,12 @@
 package com.example.aiartservice.network
 
 import com.example.aiartservice.BuildConfig.URL_AI_ART
+import com.example.aiartservice.BuildConfig.URL_AI_STYLE
 import com.example.aiartservice.BuildConfig.URL_TIME_STAMP
 import com.example.aiartservice.network.interceptor.SignatureInterceptor
 import com.example.aiartservice.network.interceptor.createLoggingInterceptor
 import com.example.aiartservice.network.request.ArtServiceAI
+import com.example.aiartservice.network.request.StyleServiceAI
 import com.example.aiartservice.network.request.TimeStampServiceAI
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
@@ -54,6 +56,6 @@ internal class ApiClient {
 
     fun buildTimeStamp(): TimeStampServiceAI = buildRetrofit(URL_TIME_STAMP).create()
     
-    /*fun buildAiStyle(): StyleServiceAI = buildRetrofit(URL_AI_STYLE).create()*/
+    fun buildAiStyle(): StyleServiceAI = buildRetrofit(URL_AI_STYLE).create()
 
 }

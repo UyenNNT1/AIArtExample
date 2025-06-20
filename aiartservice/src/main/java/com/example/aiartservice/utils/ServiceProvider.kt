@@ -3,6 +3,8 @@ package com.example.aiartservice.utils
 import com.example.aiartservice.network.ApiClient
 import com.example.aiartservice.network.repository.aiartv5.AiArtRepository
 import com.example.aiartservice.network.repository.aiartv5.AiArtRepositoryImpl
+import com.example.aiartservice.network.repository.aistyle.AiStyleRepository
+import com.example.aiartservice.network.repository.aistyle.AiStyleRepositoryImpl
 import com.example.aiartservice.network.repository.common.HandlerApiWithImageImpl
 import com.example.aiartservice.network.repository.timestamp.TimeStampRepository
 import com.example.aiartservice.network.repository.timestamp.TimeStampRepositoryImpl
@@ -19,4 +21,6 @@ object ServiceProvider {
             HandlerApiWithImageImpl(apiClient.buildArtAi())
         )
 
+    fun provideAiStyleRepository(): AiStyleRepository =
+        AiStyleRepositoryImpl(apiClient.buildAiStyle())
 }
