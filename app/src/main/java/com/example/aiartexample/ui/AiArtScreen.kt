@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.aiartexample.model.AiArtUiState
 import com.example.core.designsystem.component.CoreInputTextField
 import com.example.core.designsystem.component.GradientButton
 import com.example.core.designsystem.component.ImagePickerArea
@@ -54,7 +55,7 @@ fun AiArtScreen(
         GradientButton(
             text = "Generate AI",
             modifier = Modifier,
-            isSelected = true,
+            isSelected = false,
             onClick = {}
         )
     }

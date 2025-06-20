@@ -17,6 +17,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.example.core.R
 import com.example.core.designsystem.component.AperoTextView
+import com.example.core.designsystem.style.LocalCustomColors
 import com.example.core.designsystem.style.LocalCustomTypography
 import com.example.core.designsystem.style.pxToDp
 
@@ -37,13 +39,12 @@ fun ChooseStyleScreen(
     onTabSelected: (String) -> Unit = {},
     styles: List<StyleItem> = sampleStyles
 ) {
-    Column(modifier = modifier.padding(16.pxToDp())) {
-        AperoTextView(
+    Column(modifier = modifier) {
+        Text(
             text = "Choose your Style",
-            textStyle = LocalCustomTypography.current.Title3.medium,
+            style = LocalCustomTypography.current.Title3.medium,
             modifier = Modifier.padding(bottom = 8.pxToDp()),
-            maxLines = 1,
-            marqueeEnabled = true
+            color = LocalCustomColors.current.material.primary
         )
 
         Spacer(modifier = Modifier.height(4.pxToDp()))
@@ -73,7 +74,7 @@ fun StyleTabRow(
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 Modifier.tabIndicatorOffset(tabPositions[tabs.indexOf(selectedTab)]),
-                color = Color(0xFF9A3BEE)
+                color = LocalCustomColors.current.material.primary
             )
         }
     ) {
@@ -81,7 +82,7 @@ fun StyleTabRow(
             Tab(
                 selected = selectedTab == tab,
                 onClick = { onTabSelected(tab) },
-                selectedContentColor = Color(0xFF9A3BEE),
+                selectedContentColor = LocalCustomColors.current.material.primary,
                 unselectedContentColor = Color.Black
             ) {
                 AperoTextView(
