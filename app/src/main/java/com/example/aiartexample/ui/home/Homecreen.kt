@@ -1,4 +1,4 @@
-package com.example.aiartexample.ui
+package com.example.aiartexample.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -17,10 +17,14 @@ import com.example.core.designsystem.component.ImagePickerArea
 import com.example.core.designsystem.style.pxToDp
 
 @Composable
-fun AiArtScreen(
+fun HomeScreen(
     modifier: Modifier = Modifier,
     aiArtUiState: AiArtUiState = AiArtUiState(),
+    onOpenPickPhoto: () -> Unit = {},
+    aiArtViewModel: AiArtViewModel,
+    aiStyleViewModel: AiArtStyleViewModel
 ) {
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -44,7 +48,7 @@ fun AiArtScreen(
         ImagePickerArea(
             modifier = Modifier,
             selectedImageModel = null,
-            onOpenPickPhoto = {},
+            onOpenPickPhoto = { onOpenPickPhoto() },
             aspectRatio = 1f
         )
         Spacer(modifier = Modifier.height(28.pxToDp()))
@@ -63,6 +67,6 @@ fun AiArtScreen(
 
 @Preview
 @Composable
-private fun AiArtScreenPreview() {
-    AiArtScreen()
+private fun HomeScreenPreview() {
+
 }

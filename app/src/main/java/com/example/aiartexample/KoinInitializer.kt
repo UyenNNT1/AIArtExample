@@ -2,12 +2,21 @@ package com.example.aiartexample
 
 import android.content.Context
 import androidx.startup.Initializer
-import org.koin.core.context.GlobalContext.startKoin
+/*
+import com.example.aiartexample.di.viewModelModule
+*/
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.KoinApplication
 
-class KoinInitializer : Initializer<Unit> {
-    override fun create(context: Context) {
-        startKoin { }
+/*
+class KoinInitializer : Initializer<KoinApplication> {
+    override fun create(context: Context): KoinApplication {
+        return org.koin.core.context.startKoin {
+            androidContext(context)
+            modules(viewModelModule)
+        }
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
 }
+*/

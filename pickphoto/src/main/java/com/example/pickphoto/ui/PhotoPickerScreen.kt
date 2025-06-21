@@ -26,7 +26,7 @@ fun PhotoPickerScreen(
     selectedPhoto: PhotoData? = null,
     onCloseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
-    onPhotoClick: (PhotoData) -> Unit = {},
+    onPhotoClick: (PhotoData) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
