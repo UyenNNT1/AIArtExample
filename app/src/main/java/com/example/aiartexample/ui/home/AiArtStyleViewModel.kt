@@ -50,4 +50,7 @@ class AiArtStyleViewModel(
 
 data class AiArtStyleUiState(
     val categories: List<AiArtCategory> = emptyList(),
+    val styles: List<String> = emptyList(),
+    val currentCategoryIndex: Int = 0,
+    val currentStyleIndex: Int = 0
 )

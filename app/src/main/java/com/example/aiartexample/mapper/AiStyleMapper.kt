@@ -13,3 +13,7 @@ fun CategoryResponse.toModel(): AiArtCategory {
 fun StyleResponse.toModel(): AiArtStyle {
     return AiArtStyle(id = id, name = name, thumbnail = key)
 }
+
+fun AiArtCategory.toName(): String {
+    return this.name
+}

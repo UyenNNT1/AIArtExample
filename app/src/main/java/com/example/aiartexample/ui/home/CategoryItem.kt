@@ -1,9 +1,14 @@
 package com.example.aiartexample.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,8 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
+import com.example.aiartexample.model.AiArtCategory
+import com.example.aiartexample.model.AiArtStyle
 import com.example.core.R
 import com.example.core.designsystem.component.AperoTextView
 import com.example.core.designsystem.style.LocalCustomColors
@@ -35,9 +43,12 @@ import com.example.core.designsystem.style.pxToDp
 @Composable
 fun ChooseStyleScreen(
     modifier: Modifier = Modifier,
-    selectedTab: String = "Trending",
-    onTabSelected: (String) -> Unit = {},
-    styles: List<StyleItem> = sampleStyles
+    categories: List<AiArtCategory>,
+    selectedCategoryIndex: Int = 0,
+    selectedStyleIndex: Int = 0,
+    styles: List<AiArtStyle>,
+    onStyleClick: (AiArtStyle) -> Unit = {},
+    onCategoryClick: (AiArtCategory) -> Unit = {},
 ) {
     Column(modifier = modifier) {
         Text(
@@ -50,43 +61,50 @@ fun ChooseStyleScreen(
         Spacer(modifier = Modifier.height(4.pxToDp()))
 
         StyleTabRow(
-            tabs = listOf("Trending", "Fashion", "Anime", "Digital Art", "Painting"),
-            selectedTab = selectedTab,
-            onTabSelected = onTabSelected
+            categories = categories,
+            selectedCategoryIndex = selectedCategoryIndex,
+            onCategoryClick = onCategoryClick
         )
 
         Spacer(modifier = Modifier.height(16.pxToDp()))
 
-        StyleGrid(styles)
+        StyleGrid(
+            styles = styles,
+            modifier = Modifier.fillMaxWidth(),
+            onStyleClick = { style ->
+                onStyleClick(style)
+            },
+            selectedStyleIndex = selectedStyleIndex
+        )
     }
 }
 
 @Composable
 fun StyleTabRow(
-    tabs: List<String>,
-    selectedTab: String,
-    onTabSelected: (String) -> Unit
+    categories: List<AiArtCategory>,
+    selectedCategoryIndex: Int = 0,
+    onCategoryClick: (AiArtCategory) -> Unit
 ) {
     ScrollableTabRow(
-        selectedTabIndex = tabs.indexOf(selectedTab),
+        selectedTabIndex = selectedCategoryIndex,
         edgePadding = 0.pxToDp(),
         containerColor = Color.Transparent,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
-                Modifier.tabIndicatorOffset(tabPositions[tabs.indexOf(selectedTab)]),
+                Modifier.tabIndicatorOffset(tabPositions[selectedCategoryIndex]),
                 color = LocalCustomColors.current.material.primary
             )
         }
     ) {
-        tabs.forEachIndexed { index, tab ->
+        categories.forEachIndexed { index, category ->
             Tab(
-                selected = selectedTab == tab,
-                onClick = { onTabSelected(tab) },
+                selected = selectedCategoryIndex == index,
+                onClick = { onCategoryClick(category) },
                 selectedContentColor = LocalCustomColors.current.material.primary,
                 unselectedContentColor = Color.Black
             ) {
                 AperoTextView(
-                    text = tab,
+                    text = category.name,
                     textStyle = LocalCustomTypography.current.Body.regular,
                     modifier = Modifier.padding(vertical = 8.pxToDp()),
                     maxLines = 1,
@@ -98,42 +116,85 @@ fun StyleTabRow(
 }
 
 @Composable
-fun StyleCard(modifier: Modifier = Modifier, style: StyleItem, selected: Boolean = false) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+fun StyleCard(
+    modifier: Modifier = Modifier,
+    style: AiArtStyle,
+    isSelected: Boolean = false,
+    onStyleClick: (AiArtStyle) -> Unit = {}
+) {
+    Box(
         modifier = modifier
             .width(80.pxToDp())
-            .wrapContentHeight()
     ) {
-        AsyncImage(
-            model = style.imageRes,
-            contentDescription = null,
+        Box(
             modifier = Modifier
                 .size(80.pxToDp())
                 .clip(RoundedCornerShape(12.pxToDp()))
-                .background(Color.Gray),
-            contentScale = ContentScale.Crop
-        )
+                .background(Color.Gray)
+                .border(
+                    width = if (isSelected) 2.pxToDp() else 0.pxToDp(),
+                    color = if (isSelected) Color.Cyan else Color.Transparent,
+                    shape = RoundedCornerShape(12.pxToDp())
+                )
+                .clickable { onStyleClick(style) }
+        ) {
+            AsyncImage(
+                model = style.thumbnail,
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            if (isSelected) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.4f))
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(4.pxToDp()))
-        AperoTextView(
-            text = style.title,
-            textStyle = LocalCustomTypography.current.Caption1.regular,
-            modifier = Modifier.padding(top = 4.pxToDp()),
-            maxLines = 1,
-            marqueeEnabled = true
-        )
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(top = 88.pxToDp())
+                .fillMaxWidth()
+        ) {
+            AperoTextView(
+                text = style.name,
+                textStyle = LocalCustomTypography.current.Caption1.regular,
+                modifier = Modifier.padding(top = 4.pxToDp()),
+                maxLines = 1,
+                marqueeEnabled = true
+            )
+        }
     }
 }
 
+
 @Composable
-fun StyleGrid(styles: List<StyleItem> , modifier: Modifier = Modifier) {
-    LazyRow(
+fun StyleGrid(
+    styles: List<AiArtStyle>,
+    selectedStyleIndex: Int,
+    modifier: Modifier = Modifier,
+    onStyleClick: (AiArtStyle) -> Unit
+) {
+    Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.pxToDp())
     ) {
-        items(styles) { style ->
-            StyleCard(style = style)
+        styles.forEach { style ->
+            StyleCard(
+                style = style ,
+                onStyleClick = {
+                    onStyleClick(it)
+                },
+                isSelected = selectedStyleIndex == styles.indexOf(style)
+            )
         }
+
     }
 }
 
@@ -153,34 +214,12 @@ val sampleStyles = listOf(
 @Preview(showBackground = true, name = "Choose Style Screen")
 @Composable
 fun PreviewChooseStyleScreen() {
-    ChooseStyleScreen()
-}
-
-@Preview(showBackground = true, name = "Style Tab Row")
-@Composable
-fun PreviewStyleTabRow() {
-    StyleTabRow(
-        tabs = listOf("Trending", "Fashion", "Anime", "Digital Art", "Painting"),
-        selectedTab = "Trending",
-        onTabSelected = {}
-    )
-}
-
-@Preview(showBackground = true, name = "Style Card - Not Selected")
-@Composable
-fun PreviewStyleCardNotSelected() {
-    StyleCard(style = StyleItem(R.drawable.ic_gallery, "Novelistic"), selected = false)
-}
-
-@Preview(showBackground = true, name = "Style Card - Selected")
-@Composable
-fun PreviewStyleCardSelected() {
-    StyleCard(style = StyleItem(R.drawable.ic_gallery, "Novelistic"), selected = true)
-}
-
-@Preview(showBackground = true, name = "Style Grid")
-@Composable
-fun PreviewStyleGrid() {
-    StyleGrid(styles = sampleStyles, modifier = Modifier)
+    /*ChooseStyleScreen(
+        modifier = Modifier,
+        categories = listOf("Trending", "Fashion", "Anime", "Digital Art", "Painting"),
+        selectedCategoryIndex = 2,
+        onTabSelected = {},
+        styles = sampleStyles
+    )*/
 }
 
