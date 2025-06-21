@@ -1,4 +1,4 @@
-package com.example.aiartexample
+package com.example.aiartexample.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AiArtStyleViewModel(private val aiStyleRepository: AiStyleRepository) : ViewModel() {
+class AiArtStyleViewModel(
+    private val aiStyleRepository: AiStyleRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AiArtStyleUiState())
     val uiState = _uiState.asStateFlow()

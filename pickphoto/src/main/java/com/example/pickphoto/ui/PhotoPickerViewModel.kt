@@ -1,12 +1,10 @@
 package com.example.pickphoto.ui
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pickphoto.model.FolderData
 import com.example.pickphoto.model.PhotoData
 import com.example.pickphoto.repository.PhotoRepository
-import com.example.pickphoto.repository.PhotoRepositoryImpl
 import com.example.pickphoto.utils.PermissionUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +23,7 @@ data class PhotoPickerUiState(
 )
 
 class PhotoPickerViewModel(
-    private val context: Context,
-    private val repository: PhotoRepository = PhotoRepositoryImpl(context)
+    private val repository: PhotoRepository
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(PhotoPickerUiState())
@@ -37,13 +34,7 @@ class PhotoPickerViewModel(
     }
     
     fun checkPermissionAndLoadPhotos() {
-        val hasPermission = PermissionUtils.hasStoragePermission(context)
-        _uiState.value = _uiState.value.copy(hasPermission = hasPermission)
-        
-        if (hasPermission) {
-            loadAllPhotos()
-            loadFolders()
-        }
+        loadAllPhotos()
     }
     
     fun loadAllPhotos() {

@@ -1,22 +1,21 @@
 package com.example.pickphoto.repository
 
 import android.content.ContentResolver
-import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
 import com.example.pickphoto.model.FolderData
 import com.example.pickphoto.model.PhotoData
 import com.example.pickphoto.utils.MediaUtils
-import com.example.pickphoto.utils.PermissionUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PhotoRepositoryImpl(private val context: Context) : PhotoRepository {
-    
-    private val contentResolver: ContentResolver = context.contentResolver
+class PhotoRepositoryImpl(
+    private val contentResolver: ContentResolver,
+    private val hasStoragePermission: () -> Boolean
+) : PhotoRepository {
     
     override suspend fun getAllPhotos(): List<PhotoData> = withContext(Dispatchers.IO) {
-        if (!PermissionUtils.hasStoragePermission(context)) {
+        if (!hasStoragePermission()) {
             return@withContext emptyList()
         }
         
@@ -46,7 +45,7 @@ class PhotoRepositoryImpl(private val context: Context) : PhotoRepository {
     }
     
     override suspend fun getPhotosByFolder(bucketId: String): List<PhotoData> = withContext(Dispatchers.IO) {
-        if (!PermissionUtils.hasStoragePermission(context)) {
+        if (!hasStoragePermission()) {
             return@withContext emptyList()
         }
         
@@ -79,7 +78,7 @@ class PhotoRepositoryImpl(private val context: Context) : PhotoRepository {
     }
     
     override suspend fun getAllFolders(): List<FolderData> = withContext(Dispatchers.IO) {
-        if (!PermissionUtils.hasStoragePermission(context)) {
+        if (!hasStoragePermission()) {
             return@withContext emptyList()
         }
         

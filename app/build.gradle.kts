@@ -66,7 +66,6 @@ dependencies {
     implementation(libs.koin.core.coroutines)
     implementation(libs.koin.androidx.workmanager)
     implementation(libs.koin.androidx.compose.navigation)
-    implementation(libs.koin.compose)
 
     /*coil*/
     implementation(libs.coil.compose)
@@ -75,4 +74,5 @@ dependencies {
     /*viewmodel*/
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation(libs.androidx.navigation.compose)
 }
