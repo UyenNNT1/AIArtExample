@@ -14,6 +14,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 
 class PhotoRepositoryImpl(
     private val contentResolver: ContentResolver,
@@ -90,5 +96,59 @@ class PhotoRepositoryImpl(
         return@withContext uri
     }
 
+    inner class PhotoPagingSource : PagingSource<Int, PhotoData>() {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PhotoData> {
+            val page = params.key ?: 0
+            val pageSize = params.loadSize
+            if (!hasStoragePermission()) {
+                return LoadResult.Page(emptyList(), prevKey = null, nextKey = null)
+            }
+            val photos = mutableListOf<PhotoData>()
+            try {
+                val cursor: Cursor? = contentResolver.query(
+                    MediaUtils.getPhotosUri(),
+                    MediaUtils.PHOTO_PROJECTION,
+                    null,
+                    null,
+                    MediaUtils.getPhotosSortOrder()
+                )
+                cursor?.use {
+                    val start = page * pageSize
+                    if (start < 0) return LoadResult.Page(emptyList(), prevKey = null, nextKey = null)
+                    if (it.moveToPosition(start)) {
+                        var count = 0
+                        do {
+                            MediaUtils.cursorToPhotoData(it)?.let { photoData ->
+                                photos.add(photoData)
+                            }
+                            count++
+                        } while (count < pageSize && it.moveToNext())
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                return LoadResult.Error(e)
+            }
+            val nextKey = if (photos.size < pageSize) null else page + 1
+            val prevKey = if (page == 0) null else page - 1
+            return LoadResult.Page(photos, prevKey = prevKey, nextKey = nextKey)
+        }
+        override fun getRefreshKey(state: PagingState<Int, PhotoData>): Int? {
+            return state.anchorPosition?.let { anchorPosition ->
+                val anchorPage = state.closestPageToPosition(anchorPosition)
+                anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+            }
+        }
+    }
 
+    override fun getPhotoPagingSource(): PagingSource<Int, PhotoData> {
+        return PhotoPagingSource()
+    }
+
+    override fun getPhotoPagingFlow(pageSize: Int): Flow<PagingData<PhotoData>> {
+        return Pager(
+            config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
+            pagingSourceFactory = { getPhotoPagingSource() }
+        ).flow
+    }
 }

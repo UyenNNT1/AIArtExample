@@ -40,7 +40,6 @@ fun AppNavGraph(
                     navController.popBackStack()
                 },
                 onNextClick = { photoData ->
-                    // TODO: Handle picked photo
                     aiArtStyleViewModel.updateOriginalImage(photoData.path)
                     navController.popBackStack()
                 },
