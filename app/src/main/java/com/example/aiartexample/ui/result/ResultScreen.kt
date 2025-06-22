@@ -1,5 +1,6 @@
 package com.example.aiartexample.ui.result
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,12 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.aiartexample.ui.home.FullscreenLoadingOverlay
+import com.example.aiartexample.ui.home.UiState
 import com.example.core.R
 import com.example.core.designsystem.component.GradientButton
 import com.example.core.designsystem.component.ImagePickerArea
@@ -25,10 +29,19 @@ import com.example.core.designsystem.style.pxToDp
 fun ResultScreen(
     modifier: Modifier = Modifier,
     resultViewModel: ResultViewModel,
-    onBackClick: () -> Unit = {},
-    onDownloadClick: () -> Unit = {}
+    onBackClick: () -> Unit = {}
 ) {
     val uiState = resultViewModel.uiState.collectAsState()
+    val context = LocalContext.current
+    val downloadState = uiState.value.downloadState
+
+    LaunchedEffect(downloadState) {
+        if (downloadState is UiState.Success) {
+            resultViewModel.resetDownloadState()
+            Toast.makeText(context, "Image downloaded successfully", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -73,10 +86,12 @@ fun ResultScreen(
                         end = 24.pxToDp()
                     ),
                 isSelected = true,
-                onClick = { onDownloadClick() }
+                onClick = {
+                    resultViewModel.downloadImage(context)
+                }
             )
         }
-        FullscreenLoadingOverlay(isLoading = false)
+        FullscreenLoadingOverlay(isLoading = uiState.value.downloadState is UiState.Loading)
     }
     
 }

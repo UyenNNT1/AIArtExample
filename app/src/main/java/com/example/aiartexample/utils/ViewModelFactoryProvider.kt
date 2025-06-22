@@ -16,7 +16,7 @@ object ViewModelFactoryProvider {
         return PhotoPickerViewModel.PickPhotoViewModelFactory(context)
     }
 
-    fun provideResultViewModelFactory(): ViewModelProvider.Factory {
-        return ResultViewModel.ResultViewModelFactory()
+    fun provideResultViewModelFactory(context: Context): ViewModelProvider.Factory {
+        return ResultViewModel.ResultViewModelFactory(context)
     }
 }
