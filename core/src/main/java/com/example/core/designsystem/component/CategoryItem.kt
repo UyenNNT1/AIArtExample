@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +29,7 @@ import com.example.core.designsystem.style.LocalCustomTypography
 import com.example.core.designsystem.style.pxToDp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.lazy.items
+import com.example.core.designsystem.style.LocalCustomColors
 
 @Composable
 fun ChooseStyleScreen(

@@ -25,10 +25,10 @@ import com.example.pickphoto.R
 
 @Composable
 fun NavigationBarCustom(
-    selectedCount: Int,
+    modifier: Modifier = Modifier,
+    hasPhotoSelected: Boolean = false,
     onCloseClick: () -> Unit,
-    onNextClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onNextClick: () -> Unit
 ) {
     Row(
         modifier = modifier
@@ -53,10 +53,12 @@ fun NavigationBarCustom(
         Text(
             text = stringResource(id = R.string.pick_photo_next),
             fontSize = 16.sp,
-            color = if (selectedCount > 0) Color.Blue else Color.Black,
+            color = if (hasPhotoSelected) Color.Blue else Color.Black,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.widthIn(max = 70.dp).clickable { onNextClick() }
+            modifier = Modifier
+                .widthIn(max = 70.dp)
+                .clickable(enabled = hasPhotoSelected) { onNextClick() }
         )
     }
 }
@@ -65,7 +67,6 @@ fun NavigationBarCustom(
 @Composable
 fun NavigationBarPreview() {
     NavigationBarCustom(
-        selectedCount = 1,
         onCloseClick = {},
         onNextClick = {}
     )

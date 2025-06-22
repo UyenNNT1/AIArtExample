@@ -7,7 +7,4 @@ interface PhotoRepository {
     
     suspend fun getAllPhotos(): List<PhotoData>
     
-    suspend fun getPhotosByFolder(bucketId: String): List<PhotoData>
-    
-    suspend fun getAllFolders(): List<FolderData>
 }

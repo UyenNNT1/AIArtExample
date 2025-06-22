@@ -1,4 +1,4 @@
-package com.example.pickphoto.ui
+package com.example.aiartexample.ui.pickphoto
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,20 +24,21 @@ import com.example.pickphoto.ui.component.PhotoItem
 @Composable
 fun PhotoPickerScreen(
     photos: List<PhotoData> = emptyList(),
-    selectedPhoto: PhotoData? = null,
+    pickPhotoViewModel: PhotoPickerViewModel,
     onCloseClick: () -> Unit = {},
-    onNextClick: () -> Unit = {},
-    onPhotoClick: (PhotoData) -> Unit = {}
+    onNextClick: (PhotoData) -> Unit = {},
 ) {
+    val uiState = pickPhotoViewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
     ) {
         NavigationBarCustom(
-            selectedCount = if (selectedPhoto != null) 1 else 0,
+            hasPhotoSelected = uiState.value.selectedPhoto != null,
             onCloseClick = onCloseClick,
-            onNextClick = onNextClick,
+            onNextClick = { onNextClick(uiState.value.selectedPhoto!!) },
         )
         Box(
             modifier = Modifier
@@ -55,8 +57,8 @@ fun PhotoPickerScreen(
                 items(photos) { photo ->
                     PhotoItem(
                         photo = photo,
-                        isSelected = selectedPhoto?.id == photo.id,
-                        onClick = { onPhotoClick(photo) }
+                        isSelected = uiState.value.selectedPhoto?.id == photo.id,
+                        onClick = { pickPhotoViewModel.updateSelectedPhoto(photo) }
                     )
                 }
             }
@@ -74,9 +76,4 @@ fun PhotoPickerScreenPreview() {
             path = ""
         )
     }
-
-    PhotoPickerScreen(
-        photos = samplePhotos,
-        selectedPhoto = samplePhotos[1]
-    )
 }

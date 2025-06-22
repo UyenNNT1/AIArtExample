@@ -6,16 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.example.aiartexample.ui.home.AiArtStyleViewModel
-import com.example.aiartexample.ui.home.AiArtViewModel
 import com.example.aiartexample.ui.navigation.AppNavGraph
 import com.example.aiartexample.utils.ViewModelFactoryProvider
 import com.example.aiartservice.AiServiceConfig
 import com.example.core.designsystem.style.AppTheme
-import com.example.pickphoto.ui.PhotoPickerViewModel
+import com.example.core.designsystem.style.pxToDp
+import com.example.aiartexample.ui.pickphoto.PhotoPickerViewModel
 
 class MainActivity : ComponentActivity() {
     private val artStyleViewModel: AiArtStyleViewModel by viewModels {
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(top = 16.pxToDp()),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavGraph(
