@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.pickphoto.R
@@ -54,6 +55,9 @@ fun PhotoItem(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(photo.uri.ifEmpty { photo.path })
                         .crossfade(true)
+                        .size(240) /*resize này phu thuoc image count in design*/
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
                         .build(),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),

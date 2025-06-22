@@ -25,12 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.pickphoto.model.PhotoData
 import com.example.pickphoto.ui.component.NavigationBarCustom
 import com.example.pickphoto.ui.component.PhotoItem
 import com.example.pickphoto.utils.PermissionUtils
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.core.designsystem.style.pxToDp
 
 @Composable
 fun PhotoPickerScreen(
@@ -39,11 +40,13 @@ fun PhotoPickerScreen(
     onNextClick: (PhotoData) -> Unit = {},
 ) {
     val uiState = pickPhotoViewModel.uiState.collectAsState()
+    val photosPagingItems = pickPhotoViewModel.photoPagingFlow.collectAsLazyPagingItems()
 
     var hasPermission by remember { mutableStateOf(false) }
 
     RequestStoragePermission {
         hasPermission = true
+        pickPhotoViewModel.onPermissionGranted()
     }
 
     Column(
@@ -67,18 +70,19 @@ fun PhotoPickerScreen(
                     columns = GridCells.Fixed(3),
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 10.dp),
-                    contentPadding = PaddingValues(bottom = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        .padding(horizontal = 10.pxToDp()),
+                    contentPadding = PaddingValues(bottom = 8.pxToDp()),
+                    verticalArrangement = Arrangement.spacedBy(4.pxToDp()),
+                    horizontalArrangement = Arrangement.spacedBy(4.pxToDp())
                 ) {
-                    val photos = uiState.value.photos
-                    items(photos) { photo ->
-                        PhotoItem(
-                            photo = photo,
-                            isSelected = uiState.value.selectedPhoto?.id == photo.id,
-                            onClick = { pickPhotoViewModel.updateSelectedPhoto(photo) }
-                        )
+                    items(photosPagingItems.itemSnapshotList) { photo ->
+                        if (photo != null) {
+                            PhotoItem(
+                                photo = photo,
+                                isSelected = uiState.value.selectedPhoto?.id == photo.id,
+                                onClick = { pickPhotoViewModel.updateSelectedPhoto(photo) }
+                            )
+                        }
                     }
                 }
             }
