@@ -74,5 +74,6 @@ dependencies {
     /*viewmodel*/
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.airbnb.android:lottie-compose:6.3.0")
     implementation(libs.androidx.navigation.compose)
 }

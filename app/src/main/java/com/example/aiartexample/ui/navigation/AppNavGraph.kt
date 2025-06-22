@@ -6,18 +6,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.aiartexample.ui.home.AiArtStyleViewModel
-import com.example.aiartexample.ui.home.AiArtViewModel
 import com.example.aiartexample.ui.home.HomeScreen
 import com.example.aiartexample.ui.result.ResultScreen
-import com.example.pickphoto.ui.PhotoPickerScreen
-import com.example.pickphoto.ui.PhotoPickerViewModel
+import com.example.aiartexample.ui.pickphoto.PhotoPickerScreen
+import com.example.aiartexample.ui.pickphoto.PhotoPickerViewModel
+import com.example.aiartexample.ui.result.ResultViewModel
 
 @Composable
 fun AppNavGraph(
     navController: NavHostController = rememberNavController(),
-    aiArtViewModel: AiArtViewModel,
     aiArtStyleViewModel: AiArtStyleViewModel,
-    photoPickerViewModel: PhotoPickerViewModel
+    photoPickerViewModel: PhotoPickerViewModel,
+    resultViewModel: ResultViewModel
 ) {
     NavHost(navController, startDestination = AppRoute.Home.route) {
 
@@ -26,8 +26,11 @@ fun AppNavGraph(
                 onOpenPickPhoto = {
                     navController.navigate(AppRoute.PickPhoto.route)
                 },
-                aiArtViewModel = aiArtViewModel,
-                aiStyleViewModel = aiArtStyleViewModel
+                aiStyleViewModel = aiArtStyleViewModel,
+                onOpenResultScreen = {
+                    navController.navigate(AppRoute.Result.route)
+                    resultViewModel.updateImageResult(it)
+                }
             )
         }
 
@@ -36,17 +39,24 @@ fun AppNavGraph(
                 onCloseClick = {
                     navController.popBackStack()
                 },
-                onNextClick = {
-                    navController.navigate(AppRoute.Result.route)
-                }
+                onNextClick = { photoData ->
+                    // TODO: Handle picked photo
+                    aiArtStyleViewModel.updateOriginalImage(photoData.path)
+                    navController.popBackStack()
+                },
+                pickPhotoViewModel = photoPickerViewModel
             )
         }
 
         composable(AppRoute.Result.route) {
             ResultScreen(
                 onBackClick = {
-                    navController.popBackStack()
-                }
+                    navController.navigate(AppRoute.Home.route)
+                },
+                onDownloadClick = {
+                    // TODO: Handle download action
+                },
+                resultViewModel = resultViewModel
             )
         }
     }

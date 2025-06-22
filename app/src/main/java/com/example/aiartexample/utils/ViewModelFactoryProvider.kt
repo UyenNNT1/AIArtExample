@@ -3,20 +3,20 @@ package com.example.aiartexample.utils
 import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import com.example.aiartexample.ui.home.AiArtStyleViewModel
-import com.example.aiartexample.ui.home.AiArtViewModel
+import com.example.aiartexample.ui.pickphoto.PhotoPickerViewModel
+import com.example.aiartexample.ui.result.ResultViewModel
 import com.example.aiartservice.ServiceFactory
-import com.example.pickphoto.utils.ViewModelPickPhotoFactory
 
 object ViewModelFactoryProvider {
-    fun provideAiArtViewModelFactory(): ViewModelProvider.Factory {
-        return AiArtViewModel.AiArtViewModelFactory(ServiceFactory.getService())
-    }
-
     fun provideAiStyleViewModelFactory(): ViewModelProvider.Factory {
-        return AiArtStyleViewModel.AiStyleViewModelFactory(ServiceFactory.getService())
+        return AiArtStyleViewModel.AiStyleViewModelFactory(ServiceFactory.getService(), ServiceFactory.getService())
     }
 
     fun provideViewModelPickPhotoFactory(context: Context): ViewModelProvider.Factory {
-        return ViewModelPickPhotoFactory(context)
+        return PhotoPickerViewModel.PickPhotoViewModelFactory(context)
+    }
+
+    fun provideResultViewModelFactory(): ViewModelProvider.Factory {
+        return ResultViewModel.ResultViewModelFactory()
     }
 }

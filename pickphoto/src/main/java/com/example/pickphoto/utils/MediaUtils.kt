@@ -17,13 +17,7 @@ object MediaUtils {
         MediaStore.Images.Media.WIDTH,
         MediaStore.Images.Media.HEIGHT
     )
-    
-    val FOLDER_PROJECTION = arrayOf(
-        MediaStore.Images.Media.BUCKET_ID,
-        MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-        "COUNT(*) as photo_count"
-    )
-    
+
     fun cursorToPhotoData(cursor: Cursor): PhotoData? {
         return try {
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)

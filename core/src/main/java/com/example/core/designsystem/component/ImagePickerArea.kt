@@ -33,6 +33,7 @@ import com.example.core.designsystem.style.pxToDp
 fun ImagePickerArea(
     modifier: Modifier = Modifier,
     selectedImageModel: Any? = null,
+    isVisibleButtonSwitch: Boolean = false,
     onOpenPickPhoto: () -> Unit,
     aspectRatio: Float = 1f
 ) {
@@ -59,14 +60,16 @@ fun ImagePickerArea(
                     contentScale = ContentScale.FillHeight
                 )
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_open_pick_photo),
-                    contentDescription = "open pick photo",
-                    modifier = Modifier
-                        .size(40.pxToDp())
-                        .padding(top = 16.pxToDp(), start = 16.pxToDp())
-                        .clickable { onOpenPickPhoto() }
-                )
+                if (isVisibleButtonSwitch) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_open_pick_photo),
+                        contentDescription = "open pick photo",
+                        modifier = Modifier
+                            .size(40.pxToDp())
+                            .padding(top = 16.pxToDp(), start = 16.pxToDp())
+                            .clickable { onOpenPickPhoto() }
+                    )
+                }
             }
         } else {
             Column(
