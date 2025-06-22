@@ -15,8 +15,10 @@ import com.example.core.designsystem.style.pxToDp
 @Composable
 fun BannerMessage(
     modifier: Modifier = Modifier,
+    isVisible: Boolean = false,
     message: String = ""
 ) {
+    if (!isVisible) return
     Box(
         modifier = modifier
             .fillMaxWidth()

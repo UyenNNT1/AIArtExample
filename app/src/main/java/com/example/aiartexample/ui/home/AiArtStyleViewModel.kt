@@ -1,14 +1,18 @@
 package com.example.aiartexample.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.aiartexample.mapper.toModel
 import com.example.aiartexample.model.AiArtCategory
 import com.example.aiartexample.model.AiArtStyle
+import com.example.aiartexample.model.ResultError
+import com.example.aiartservice.network.model.AiArtParams
 import com.example.aiartservice.network.repository.aiartv5.AiArtRepository
 import com.example.aiartservice.network.repository.aistyle.AiStyleRepository
 import com.example.aiartservice.network.response.ResponseState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -47,6 +51,23 @@ class AiArtStyleViewModel(
         }
     }
 
+    fun genAiArtImage(params: AiArtParams) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.update { it.copy(generatedImageState = UiState.Loading) }
+            when (val res = aiGenRepository.genArtAi(params)) {
+                is ResponseState.Success -> {
+                    _uiState.update { it.copy(generatedImageState = UiState.Success(res.data?.path!!)) }
+                    Log.d("uyenntt", "genAiArtImage: ${res.data?.path!!}")
+                }
+
+                is ResponseState.Error -> {
+                    _uiState.update { it.copy(generatedImageState = UiState.Error(res.error.message)) }
+                    Log.d("uyenntt", "genAiArtImage: ${res.error.message}")
+                }
+            }
+        }
+    }
+
     fun updateCategoryIndex(index: Int) {
         _uiState.update {
             it.copy(currentCategoryIndex = index, currentStyleIndex = -1)
@@ -56,6 +77,18 @@ class AiArtStyleViewModel(
     fun updateStyleIndex(index: Int) {
         _uiState.update {
             it.copy(currentStyleIndex = index)
+        }
+    }
+
+    fun updateOriginalImage(imageUri: String) {
+        _uiState.update {
+            it.copy(originalImage = imageUri)
+        }
+    }
+
+    fun resetGeneratedImageState() {
+        _uiState.update {
+            it.copy(generatedImageState = UiState.Idle)
         }
     }
 
@@ -78,13 +111,14 @@ data class AiArtStyleUiState(
     val currentCategoryIndex: Int = 0,
     val currentStyleIndex: Int = 0,
     val originalImage: String? = null,
-    val generatedImage: String? = null
+    val generatedImageState: UiState<String> = UiState.Idle
 )
 
 sealed class UiState<out T> {
     object Loading : UiState<Nothing>()
     data class Success<T>(val data: T) : UiState<T>()
     data class Error(val message: String?) : UiState<Nothing>()
+    object Idle : UiState<Nothing>()
 }
 
 /*fake data*/

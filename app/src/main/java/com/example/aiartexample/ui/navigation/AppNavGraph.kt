@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.aiartexample.ui.home.AiArtStyleViewModel
 import com.example.aiartexample.ui.home.HomeScreen
+import com.example.aiartexample.ui.home.UiState
 import com.example.aiartexample.ui.result.ResultScreen
 import com.example.aiartexample.ui.pickphoto.PhotoPickerScreen
 import com.example.aiartexample.ui.pickphoto.PhotoPickerViewModel
@@ -24,7 +25,10 @@ fun AppNavGraph(
                 onOpenPickPhoto = {
                     navController.navigate(AppRoute.PickPhoto.route)
                 },
-                aiStyleViewModel = aiArtStyleViewModel
+                aiStyleViewModel = aiArtStyleViewModel,
+                onOpenResultScreen = {
+                    navController.navigate(AppRoute.Result.route)
+                }
             )
         }
 
@@ -33,9 +37,10 @@ fun AppNavGraph(
                 onCloseClick = {
                     navController.popBackStack()
                 },
-                onNextClick = {
+                onNextClick = { photoData ->
                     // TODO: Handle picked photo
-                    navController.navigate(AppRoute.Result.route)
+                    aiArtStyleViewModel.updateOriginalImage(photoData.path)
+                    navController.popBackStack()
                 },
                 pickPhotoViewModel = photoPickerViewModel
             )
@@ -44,7 +49,7 @@ fun AppNavGraph(
         composable(AppRoute.Result.route) {
             ResultScreen(
                 onBackClick = {
-                    navController.popBackStack()
+                    navController.navigate(AppRoute.Home.route)
                 }
             )
         }

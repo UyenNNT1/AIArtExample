@@ -46,7 +46,7 @@ fun GradientButton(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16))
             .background(brush = gradient)
-            .clickable { onClick() }
+            .clickable(enabled = isSelected) { onClick() }
             .padding(vertical = 12.pxToDp(), horizontal = 32.pxToDp()),
         contentAlignment = Alignment.Center
     ) {

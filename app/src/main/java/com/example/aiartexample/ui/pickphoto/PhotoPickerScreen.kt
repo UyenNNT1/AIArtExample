@@ -1,5 +1,8 @@
 package com.example.aiartexample.ui.pickphoto
 
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,23 +15,36 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.pickphoto.model.PhotoData
 import com.example.pickphoto.ui.component.NavigationBarCustom
 import com.example.pickphoto.ui.component.PhotoItem
+import com.example.pickphoto.utils.PermissionUtils
 
 @Composable
 fun PhotoPickerScreen(
-    photos: List<PhotoData> = emptyList(),
     pickPhotoViewModel: PhotoPickerViewModel,
     onCloseClick: () -> Unit = {},
     onNextClick: (PhotoData) -> Unit = {},
 ) {
     val uiState = pickPhotoViewModel.uiState.collectAsState()
+
+    var hasPermission by remember { mutableStateOf(false) }
+
+    RequestStoragePermission {
+        hasPermission = true
+    }
 
     Column(
         modifier = Modifier
@@ -45,23 +61,53 @@ fun PhotoPickerScreen(
                 .weight(1f)
                 .fillMaxWidth()
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 10.dp),
-                contentPadding = PaddingValues(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(photos) { photo ->
-                    PhotoItem(
-                        photo = photo,
-                        isSelected = uiState.value.selectedPhoto?.id == photo.id,
-                        onClick = { pickPhotoViewModel.updateSelectedPhoto(photo) }
-                    )
+            if (hasPermission) {
+                /*pickPhotoViewModel.loadAllPhotos()*/
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 10.dp),
+                    contentPadding = PaddingValues(bottom = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    val photos = uiState.value.photos
+                    items(photos) { photo ->
+                        PhotoItem(
+                            photo = photo,
+                            isSelected = uiState.value.selectedPhoto?.id == photo.id,
+                            onClick = { pickPhotoViewModel.updateSelectedPhoto(photo) }
+                        )
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RequestStoragePermission(
+    onGranted: () -> Unit
+) {
+    val context = LocalContext.current
+    val permission = PermissionUtils.getRequiredStoragePermission()
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            onGranted()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, permission)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            launcher.launch(permission)
+        } else {
+            onGranted()
         }
     }
 }
