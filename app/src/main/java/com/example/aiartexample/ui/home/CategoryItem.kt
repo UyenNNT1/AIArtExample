@@ -210,13 +210,7 @@ fun StyleGrid(
 @Preview(showBackground = true, name = "Choose Style Screen")
 @Composable
 fun PreviewChooseStyleScreen() {
-    ChooseStyleScreen(
-        modifier = Modifier,
-        categories = fakeAiArtCategories,
-        selectedCategoryIndex = 0,
-        selectedStyleIndex = 0,
-        styles = fakeAiArtCategories[0].aiArtStyles,
-    )
+
 }
 
 @Preview(showBackground = true, name = "Style Card")

@@ -3,46 +3,116 @@ package com.example.aiartexample.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.aiartexample.model.ResultError
+import com.example.aiartexample.mapper.toModel
+import com.example.aiartexample.model.AiArtCategory
+import com.example.aiartexample.model.AiArtStyle
 import com.example.aiartservice.network.model.AiArtParams
 import com.example.aiartservice.network.repository.aiartv5.AiArtRepository
+import com.example.aiartservice.network.repository.aistyle.AiStyleRepository
 import com.example.aiartservice.network.response.ResponseState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class AiArtViewModel(
-    private val aiServiceRepository: AiArtRepository
+class AiArtStyleViewModel(
+    private val aiStyleRepository: AiStyleRepository,
+    private val aiGenRepository: AiArtRepository
 ) : ViewModel() {
-    private val _resultSuccess = MutableStateFlow<String?>(null)
-    val resultSuccess = _resultSuccess.asStateFlow()
-    private val _resultError = MutableStateFlow<ResultError?>(null)
-    val resultError = _resultError.asStateFlow()
 
+    private val _uiState = MutableStateFlow(AiArtStyleUiState())
+    val uiState = _uiState.asStateFlow()
+
+    init {
+        fetchAiArtCategories()
+    }
+
+    private fun fetchAiArtCategories() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(categoriesState = UiState.Loading) }
+            when (val result = aiStyleRepository.getAiStyles("IN")) {
+                is ResponseState.Success -> {
+                    val data = result.data
+                    val categories = data?.map { categoryResponse -> categoryResponse.toModel() }.orEmpty()
+                    _uiState.update {
+                        it.copy(
+                            categoriesState = UiState.Success(categories),
+                            currentCategoryIndex = 0,
+                            currentStyleIndex = -1
+                        )
+                    }
+                }
+
+                else -> UiState.Error("Failed to load data")
+            }
+        }
+    }
 
     fun genAiArtImage(params: AiArtParams) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val res = aiServiceRepository.genArtAi(params)) {
+            _uiState.update { it.copy(generatedImageState = UiState.Loading) }
+            when (val res = aiGenRepository.genArtAi(params)) {
                 is ResponseState.Success -> {
-                    _resultSuccess.value = res.data?.path
+                    _uiState.update { it.copy(generatedImageState = UiState.Success(res.data?.path!!)) }
                 }
 
                 is ResponseState.Error -> {
-                    _resultError.value = ResultError(res.code, res.error.message!!)
+                    _uiState.update { it.copy(generatedImageState = UiState.Error(res.error.message)) }
                 }
             }
         }
     }
 
-    class AiArtViewModelFactory(
-        private val aiArtRepository: AiArtRepository) : ViewModelProvider.Factory {
+    fun updateCategoryIndex(index: Int) {
+        _uiState.update {
+            it.copy(currentCategoryIndex = index, currentStyleIndex = -1)
+        }
+    }
+
+    fun updateStyleIndex(index: Int) {
+        _uiState.update {
+            it.copy(currentStyleIndex = index)
+        }
+    }
+
+    fun updateOriginalImage(imageUri: String) {
+        _uiState.update {
+            it.copy(originalImage = imageUri)
+        }
+    }
+
+    fun resetGeneratedImageState() {
+        _uiState.update {
+            it.copy(generatedImageState = UiState.Idle)
+        }
+    }
+
+    class AiStyleViewModelFactory(
+        private val aiStyleRepository: AiStyleRepository,
+        private val aiGenRepository: AiArtRepository
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(AiArtViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(AiArtStyleViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return AiArtViewModel(aiArtRepository) as T
+                return AiArtStyleViewModel(aiStyleRepository, aiGenRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
+}
+
+data class AiArtStyleUiState(
+    val categoriesState: UiState<List<AiArtCategory>> = UiState.Loading,
+    val currentCategoryIndex: Int = 0,
+    val currentStyleIndex: Int = 0,
+    val originalImage: String? = null,
+    val generatedImageState: UiState<String> = UiState.Idle
+)
+
+sealed class UiState<out T> {
+    object Loading : UiState<Nothing>()
+    data class Success<T>(val data: T) : UiState<T>()
+    data class Error(val message: String?) : UiState<Nothing>()
+    object Idle : UiState<Nothing>()
 }

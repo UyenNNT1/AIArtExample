@@ -17,6 +17,7 @@ import com.example.aiartservice.AiServiceConfig
 import com.example.core.designsystem.style.AppTheme
 import com.example.core.designsystem.style.pxToDp
 import com.example.aiartexample.ui.pickphoto.PhotoPickerViewModel
+import com.example.aiartexample.ui.result.ResultViewModel
 
 class MainActivity : ComponentActivity() {
     private val artStyleViewModel: AiArtStyleViewModel by viewModels {
@@ -25,6 +26,10 @@ class MainActivity : ComponentActivity() {
 
     private val pickPhotoViewModel: PhotoPickerViewModel by viewModels {
         ViewModelFactoryProvider.provideViewModelPickPhotoFactory(this)
+    }
+
+    private val resultViewModel: ResultViewModel by viewModels {
+        ViewModelFactoryProvider.provideResultViewModelFactory()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     AppNavGraph(
                         aiArtStyleViewModel = artStyleViewModel,
                         photoPickerViewModel = pickPhotoViewModel,
+                        resultViewModel = resultViewModel
                     )
                 }
             }

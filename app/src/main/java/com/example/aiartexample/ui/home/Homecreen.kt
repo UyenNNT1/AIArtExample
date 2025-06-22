@@ -33,7 +33,7 @@ import com.example.core.designsystem.component.BannerMessage
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onOpenPickPhoto: () -> Unit = {},
-    onOpenResultScreen: () -> Unit = {},
+    onOpenResultScreen: (String) -> Unit = {},
     aiStyleViewModel: AiArtStyleViewModel
 ) {
     val styleUiState by aiStyleViewModel.uiState.collectAsState()
@@ -42,7 +42,7 @@ fun HomeScreen(
 
     LaunchedEffect(generatedImageState) {
         if (generatedImageState is UiState.Success) {
-            onOpenResultScreen()
+            onOpenResultScreen(generatedImageState.data)
             aiStyleViewModel.resetGeneratedImageState()
         }
     }
