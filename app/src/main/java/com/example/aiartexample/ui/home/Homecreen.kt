@@ -1,6 +1,5 @@
 package com.example.aiartexample.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,7 +44,6 @@ fun HomeScreen(
         if (generatedImageState is UiState.Success) {
             onOpenResultScreen(generatedImageState.data)
             aiStyleViewModel.resetGeneratedImageState()
-            Log.d("uyenntt", "HomeScreen: ${generatedImageState.data}")
         }
     }
 
@@ -66,11 +64,15 @@ fun HomeScreen(
         ) {
             CoreInputTextField(
                 modifier = Modifier,
-                value = "",
-                onValueChange = {},
+                value = styleUiState.prompt ?: "",
+                onValueChange = {
+                    aiStyleViewModel.updatePrompt(it)
+                },
                 placeholder = "Enter your prompt",
                 isEnabled = true,
-                onClearClick = {}
+                onClearClick = {
+                    aiStyleViewModel.updatePrompt("")
+                }
             )
             Spacer(modifier = Modifier.height(28.pxToDp()))
             ImagePickerArea(
@@ -105,7 +107,7 @@ fun HomeScreen(
                         onClick = {
                             aiStyleViewModel.genAiArtImage(
                                 AiArtParams(
-                                    positivePrompt = "",
+                                    positivePrompt = styleUiState.prompt,
                                     styleId = categories[styleUiState.currentCategoryIndex].aiArtStyles[styleUiState.currentStyleIndex].id,
                                     pathImageOrigin = styleUiState.originalImage!!
                                 )

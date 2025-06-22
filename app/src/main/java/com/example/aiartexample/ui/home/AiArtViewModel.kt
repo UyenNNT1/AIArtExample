@@ -82,6 +82,12 @@ class AiArtStyleViewModel(
         }
     }
 
+    fun updatePrompt(prompt: String) {
+        _uiState.update {
+            it.copy(prompt = prompt)
+        }
+    }
+
     fun resetGeneratedImageState() {
         _uiState.update {
             it.copy(generatedImageState = UiState.Idle)
@@ -107,7 +113,8 @@ data class AiArtStyleUiState(
     val currentCategoryIndex: Int = 0,
     val currentStyleIndex: Int = 0,
     val originalImage: String? = null,
-    val generatedImageState: UiState<String> = UiState.Idle
+    val generatedImageState: UiState<String> = UiState.Idle,
+    val prompt: String? = null
 )
 
 sealed class UiState<out T> {
