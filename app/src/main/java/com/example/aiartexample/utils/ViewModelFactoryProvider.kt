@@ -8,12 +8,8 @@ import com.example.aiartservice.ServiceFactory
 import com.example.pickphoto.utils.ViewModelPickPhotoFactory
 
 object ViewModelFactoryProvider {
-    fun provideAiArtViewModelFactory(): ViewModelProvider.Factory {
-        return AiArtViewModel.AiArtViewModelFactory(ServiceFactory.getService())
-    }
-
     fun provideAiStyleViewModelFactory(): ViewModelProvider.Factory {
-        return AiArtStyleViewModel.AiStyleViewModelFactory(ServiceFactory.getService())
+        return AiArtStyleViewModel.AiStyleViewModelFactory(ServiceFactory.getService(), ServiceFactory.getService())
     }
 
     fun provideViewModelPickPhotoFactory(context: Context): ViewModelProvider.Factory {

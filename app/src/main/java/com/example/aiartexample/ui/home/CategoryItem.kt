@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
@@ -30,6 +31,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import com.example.aiartexample.model.AiArtCategory
@@ -44,11 +47,11 @@ import com.example.core.designsystem.style.pxToDp
 fun ChooseStyleScreen(
     modifier: Modifier = Modifier,
     categories: List<AiArtCategory>,
-    selectedCategoryIndex: Int = 0,
-    selectedStyleIndex: Int = 0,
+    selectedCategoryIndex: Int,
+    selectedStyleIndex: Int,
     styles: List<AiArtStyle>,
-    onStyleClick: (AiArtStyle) -> Unit = {},
-    onCategoryClick: (AiArtCategory) -> Unit = {},
+    onStyleClick: (Int) -> Unit = {},
+    onCategoryClick: (Int) -> Unit = {},
 ) {
     Column(modifier = modifier) {
         Text(
@@ -60,7 +63,7 @@ fun ChooseStyleScreen(
 
         Spacer(modifier = Modifier.height(4.pxToDp()))
 
-        StyleTabRow(
+        CategoryList(
             categories = categories,
             selectedCategoryIndex = selectedCategoryIndex,
             onCategoryClick = onCategoryClick
@@ -80,51 +83,63 @@ fun ChooseStyleScreen(
 }
 
 @Composable
-fun StyleTabRow(
+fun CategoryList(
+    modifier: Modifier = Modifier,
     categories: List<AiArtCategory>,
-    selectedCategoryIndex: Int = 0,
-    onCategoryClick: (AiArtCategory) -> Unit
+    selectedCategoryIndex: Int,
+    onCategoryClick: (Int) -> Unit
 ) {
-    ScrollableTabRow(
-        selectedTabIndex = selectedCategoryIndex,
-        edgePadding = 0.pxToDp(),
-        containerColor = Color.Transparent,
-        indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                Modifier.tabIndicatorOffset(tabPositions[selectedCategoryIndex]),
-                color = LocalCustomColors.current.material.primary
-            )
-        }
+    LazyRow(
+        modifier = modifier
     ) {
-        categories.forEachIndexed { index, category ->
-            Tab(
-                selected = selectedCategoryIndex == index,
-                onClick = { onCategoryClick(category) },
-                selectedContentColor = LocalCustomColors.current.material.primary,
-                unselectedContentColor = Color.Black
-            ) {
-                AperoTextView(
-                    text = category.name,
-                    textStyle = LocalCustomTypography.current.Body.regular,
-                    modifier = Modifier.padding(vertical = 8.pxToDp()),
-                    maxLines = 1,
-                    marqueeEnabled = true
-                )
-            }
+        itemsIndexed(categories, key = {index, category -> category.id}) { index, category ->
+            CategoryItem(
+                modifier = Modifier.padding(end = 8.pxToDp()),
+                category = category,
+                isSelected = selectedCategoryIndex == index,
+                onCategoryClick = { onCategoryClick(index) }
+            )
         }
     }
 }
 
 @Composable
+fun CategoryItem(
+    modifier: Modifier = Modifier,
+    category: AiArtCategory,
+    isSelected: Boolean = false,
+    onCategoryClick: () -> Unit = {}
+){
+    val color = if (isSelected) LocalCustomColors.current.material.primary else LocalCustomColors.current.material.onSurfaceVariant
+    Column(
+        modifier = modifier.clickable { onCategoryClick() }
+    ) {
+        Text(
+            text = category.name,
+            style = LocalCustomTypography.current.Body.regular,
+            modifier = Modifier.padding(vertical = 8.pxToDp()),
+            color = color
+        )
+        Spacer(modifier = Modifier.width(8.pxToDp()))
+        Box(
+            modifier = Modifier
+                .size(height = 1.pxToDp(), width = 10.pxToDp())
+                .background(color),
+            contentAlignment = Alignment.Center
+        ){}
+    }
+}
+@Composable
 fun StyleCard(
     modifier: Modifier = Modifier,
     style: AiArtStyle,
     isSelected: Boolean = false,
-    onStyleClick: (AiArtStyle) -> Unit = {}
+    onStyleClick: () -> Unit = {}
 ) {
-    Box(
+    Column (
         modifier = modifier
             .width(80.pxToDp())
+            .wrapContentHeight()
     ) {
         Box(
             modifier = Modifier
@@ -136,13 +151,15 @@ fun StyleCard(
                     color = if (isSelected) Color.Cyan else Color.Transparent,
                     shape = RoundedCornerShape(12.pxToDp())
                 )
-                .clickable { onStyleClick(style) }
+                .clickable { onStyleClick() }
         ) {
             AsyncImage(
                 model = style.thumbnail,
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.image_test),
+                error = painterResource(id = R.drawable.image_test)
             )
 
             if (isSelected) {
@@ -156,70 +173,58 @@ fun StyleCard(
 
         Spacer(modifier = Modifier.height(4.pxToDp()))
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(top = 88.pxToDp())
-                .fillMaxWidth()
-        ) {
-            AperoTextView(
-                text = style.name,
-                textStyle = LocalCustomTypography.current.Caption1.regular,
-                modifier = Modifier.padding(top = 4.pxToDp()),
-                maxLines = 1,
-                marqueeEnabled = true
-            )
-        }
+        Text(
+            text = style.name,
+            style = LocalCustomTypography.current.Caption1.regular,
+            modifier = Modifier.padding(top = 4.pxToDp()).fillMaxWidth(),
+            color = if (isSelected) Color.Cyan else Color.Black,
+            textAlign = TextAlign.Center
+        )
     }
 }
-
 
 @Composable
 fun StyleGrid(
     styles: List<AiArtStyle>,
     selectedStyleIndex: Int,
     modifier: Modifier = Modifier,
-    onStyleClick: (AiArtStyle) -> Unit
+    onStyleClick: (Int) -> Unit
 ) {
-    Row(
+    LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.pxToDp())
     ) {
-        styles.forEach { style ->
+        itemsIndexed(styles, key = { index, style -> style.id }) { index, style ->
             StyleCard(
-                style = style ,
+                style = style,
                 onStyleClick = {
-                    onStyleClick(it)
+                    onStyleClick(index)
                 },
-                isSelected = selectedStyleIndex == styles.indexOf(style)
+                isSelected = selectedStyleIndex == index
             )
         }
 
     }
 }
 
-data class StyleItem(
-    val imageRes: Int,
-    val title: String
-)
-
-val sampleStyles = listOf(
-    StyleItem(R.drawable.image_test, "Novelistic"),
-    StyleItem(R.drawable.image_test, "Novelistic"),
-    StyleItem(R.drawable.image_test, "Novelistic"),
-    StyleItem(R.drawable.image_test, "Novelistic"),
-    StyleItem(R.drawable.image_test, "Realistic")
-)
-
 @Preview(showBackground = true, name = "Choose Style Screen")
 @Composable
 fun PreviewChooseStyleScreen() {
-    /*ChooseStyleScreen(
+    ChooseStyleScreen(
         modifier = Modifier,
-        categories = listOf("Trending", "Fashion", "Anime", "Digital Art", "Painting"),
-        selectedCategoryIndex = 2,
-        onTabSelected = {},
-        styles = sampleStyles
-    )*/
+        categories = fakeAiArtCategories,
+        selectedCategoryIndex = 0,
+        selectedStyleIndex = 0,
+        styles = fakeAiArtCategories[0].aiArtStyles,
+    )
 }
 
+@Preview(showBackground = true, name = "Style Card")
+@Composable
+private fun StyleCardPreview() {
+    StyleCard(
+        style = AiArtStyle("style_2_0", "Neon", "https://example.com/style_2_0.jpg"),
+        onStyleClick = {},
+        isSelected = false
+    )
+}

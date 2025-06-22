@@ -18,10 +18,6 @@ import com.example.core.designsystem.style.AppTheme
 import com.example.pickphoto.ui.PhotoPickerViewModel
 
 class MainActivity : ComponentActivity() {
-    private val artViewModel: AiArtViewModel by viewModels {
-        ViewModelFactoryProvider.provideAiArtViewModelFactory()
-    }
-
     private val artStyleViewModel: AiArtStyleViewModel by viewModels {
         ViewModelFactoryProvider.provideAiStyleViewModelFactory()
     }
@@ -42,7 +38,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                     AppNavGraph(
                         aiArtStyleViewModel = artStyleViewModel,
-                        aiArtViewModel = artViewModel,
                         photoPickerViewModel = pickPhotoViewModel,
                     )
                 }

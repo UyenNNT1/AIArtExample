@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.aiartexample.model.AiArtUiState
 import com.example.core.designsystem.component.CoreInputTextField
 import com.example.core.designsystem.component.GradientButton
 import com.example.core.designsystem.component.ImagePickerArea
@@ -21,9 +20,7 @@ import com.example.core.designsystem.style.pxToDp
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    aiArtUiState: AiArtUiState = AiArtUiState(),
     onOpenPickPhoto: () -> Unit = {},
-    aiArtViewModel: AiArtViewModel,
     aiStyleViewModel: AiArtStyleViewModel
 ) {
     val styleUiState by aiStyleViewModel.uiState.collectAsState()
@@ -55,19 +52,33 @@ fun HomeScreen(
             aspectRatio = 1f
         )
         Spacer(modifier = Modifier.height(28.pxToDp()))
-        ChooseStyleScreen(
-            modifier = Modifier.height(162.pxToDp()),
-            categories = emptyList(),
-            selectedCategoryIndex = 0,
-            styles = emptyList(),
-            onStyleClick = {},
-            onCategoryClick = {}
-        )
+        when (val state = styleUiState.categoriesState) {
+            is UiState.Loading -> {
+               /*no-op*/
+            }
+
+            is UiState.Success -> {
+                val categories = state.data
+                ChooseStyleScreen(
+                    modifier = Modifier.height(162.pxToDp()),
+                    categories = categories,
+                    selectedCategoryIndex = styleUiState.currentCategoryIndex,
+                    styles = categories[styleUiState.currentCategoryIndex].aiArtStyles,
+                    selectedStyleIndex = styleUiState.currentStyleIndex,
+                    onStyleClick = { aiStyleViewModel.updateStyleIndex(it) },
+                    onCategoryClick = { aiStyleViewModel.updateCategoryIndex(it) }
+                )
+            }
+
+            is UiState.Error -> {
+                /*no-op*/
+            }
+        }
         Spacer(modifier = Modifier.height(28.pxToDp()))
         GradientButton(
             text = "Generate AI",
             modifier = Modifier,
-            isSelected = false,
+            isSelected = styleUiState.currentStyleIndex != -1,
             onClick = {}
         )
     }

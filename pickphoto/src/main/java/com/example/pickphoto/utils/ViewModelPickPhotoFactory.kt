@@ -13,7 +13,7 @@ class ViewModelPickPhotoFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PhotoPickerViewModel::class.java)) {
             val repository = PhotoRepositoryFactory.create(context)
-            return PhotoPickerViewModel(repository) as T
+            return PhotoPickerViewModel(repository, context) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

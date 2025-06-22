@@ -15,7 +15,6 @@ import com.example.pickphoto.ui.PhotoPickerViewModel
 @Composable
 fun AppNavGraph(
     navController: NavHostController = rememberNavController(),
-    aiArtViewModel: AiArtViewModel,
     aiArtStyleViewModel: AiArtStyleViewModel,
     photoPickerViewModel: PhotoPickerViewModel
 ) {
@@ -26,7 +25,6 @@ fun AppNavGraph(
                 onOpenPickPhoto = {
                     navController.navigate(AppRoute.PickPhoto.route)
                 },
-                aiArtViewModel = aiArtViewModel,
                 aiStyleViewModel = aiArtStyleViewModel
             )
         }
@@ -36,9 +34,11 @@ fun AppNavGraph(
                 onCloseClick = {
                     navController.popBackStack()
                 },
-                onNextClick = {
+                onNextClick = { photoData ->
+                    // TODO: Handle picked photo
                     navController.navigate(AppRoute.Result.route)
-                }
+                },
+                viewModel = photoPickerViewModel
             )
         }
 
