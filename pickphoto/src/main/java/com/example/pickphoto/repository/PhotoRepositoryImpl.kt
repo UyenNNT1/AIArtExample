@@ -7,7 +7,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import com.example.pickphoto.model.FolderData
 import com.example.pickphoto.model.PhotoData
 import com.example.pickphoto.utils.MediaUtils
 import kotlinx.coroutines.Dispatchers
