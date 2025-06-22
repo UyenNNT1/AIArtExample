@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flatMapLatest
 
 data class PhotoPickerUiState(
     val isLoading: Boolean = false,
@@ -23,9 +24,13 @@ data class PhotoPickerUiState(
 class PhotoPickerViewModel(
     private val repository: PhotoRepository
 ) : ViewModel() {
+    private val _permissionGrantedKey = MutableStateFlow(0)
+    val permissionGrantedKey = _permissionGrantedKey.asStateFlow()
 
     val photoPagingFlow: Flow<PagingData<PhotoData>> =
-        repository.getPhotoPagingFlow(pageSize = 50).cachedIn(viewModelScope)
+        permissionGrantedKey.flatMapLatest {
+            repository.getPhotoPagingFlow(pageSize = 50)
+        }.cachedIn(viewModelScope)
 
     private val _uiState = MutableStateFlow(PhotoPickerUiState())
     val uiState: StateFlow<PhotoPickerUiState> = _uiState.asStateFlow()
@@ -55,6 +60,10 @@ class PhotoPickerViewModel(
         _uiState.value = _uiState.value.copy(
             selectedPhoto = photo
         )
+    }
+
+    fun onPermissionGranted() {
+        _permissionGrantedKey.value += 1
     }
 
     class PickPhotoViewModelFactory(

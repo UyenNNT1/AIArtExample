@@ -46,6 +46,7 @@ fun PhotoPickerScreen(
 
     RequestStoragePermission {
         hasPermission = true
+        pickPhotoViewModel.onPermissionGranted()
     }
 
     Column(
