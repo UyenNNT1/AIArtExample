@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val resultViewModel: ResultViewModel by viewModels {
-        ViewModelFactoryProvider.provideResultViewModelFactory()
+        ViewModelFactoryProvider.provideResultViewModelFactory(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

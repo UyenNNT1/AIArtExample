@@ -50,7 +50,7 @@ class AiArtStyleViewModel(
     }
 
     fun genAiArtImage(params: AiArtParams) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiState.update { it.copy(generatedImageState = UiState.Loading) }
             when (val res = aiGenRepository.genArtAi(params)) {
                 is ResponseState.Success -> {

@@ -53,9 +53,6 @@ fun AppNavGraph(
                 onBackClick = {
                     navController.navigate(AppRoute.Home.route)
                 },
-                onDownloadClick = {
-                    // TODO: Handle download action
-                },
                 resultViewModel = resultViewModel
             )
         }

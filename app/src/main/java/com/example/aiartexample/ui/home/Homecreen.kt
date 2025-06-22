@@ -1,5 +1,6 @@
 package com.example.aiartexample.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ fun HomeScreen(
         if (generatedImageState is UiState.Success) {
             onOpenResultScreen(generatedImageState.data)
             aiStyleViewModel.resetGeneratedImageState()
+            Log.d("uyenntt", "HomeScreen: ${generatedImageState.data}")
         }
     }
 
@@ -137,7 +139,7 @@ fun FullscreenLoadingOverlay(isLoading: Boolean) {
             contentAlignment = Alignment.Center
         ) {
             LottieAnimation(
-                composition = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_generating)).value,
+                composition = rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.vsl_aiart_lottie_loading)).value,
                 iterations = LottieConstants.IterateForever,
                 modifier = Modifier.size(150.pxToDp())
             )
